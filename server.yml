@@ -1,0 +1,11 @@
+---
+- hosts: web-server
+  become: yes
+  become_user: root
+  gather_facts: yes
+  roles:
+    - common
+    - nginx
+    - mariadb
+    - php-fpm
+    - nginx-web

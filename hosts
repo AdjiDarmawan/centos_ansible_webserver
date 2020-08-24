@@ -1,0 +1,16 @@
+[my-server]
+<YOUR_IP_SERVER> ansible_user=<define_your_user>
+[web-server]
+<YOUR_IP_SERVER> ansible_user=<define_your_user>
+[elk-server]
+<YOUR_IP_SERVER> ansible_user=<define_your_user>
+[ossec-wazuh]
+<YOUR_IP_SERVER> ansible_user=<define_your_user>
+[snort]
+<YOUR_IP_SERVER> ansible_user=<define_your_user>
+[jenkins]
+<YOUR_IP_SERVER> ansible_user=<define_your_user>
+[consul]
+<YOUR_IP_SERVER> ansible_user=<define_your_user>
+[vault]
+<YOUR_IP_SERVER> ansible_user=<define_your_user>

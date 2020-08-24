@@ -1,0 +1,39 @@
+#Create Nginx Server Block (VirtualHost)
+- name: 1. Create useragent block
+  template:
+    src: templates/blockuseragents.rules
+    dest: /etc/nginx/blockuseragents.rules
+  tags:
+    - NginxHarderning
+
+- name: 2. Change Nginx Configurations
+  template:
+    src: templates/secops.conf
+    dest: /etc/nginx/sites-available/secops.conf
+  tags:
+    - ConfigurationsNginxServer
+
+#Running Link Server Block File
+- name: 3. Symlink server block file
+  file:
+    src: /etc/nginx/sites-available/secops.conf
+    dest: /etc/nginx/sites-enabled/secops.conf
+    state: link
+  tags:
+    - RunningSymlink
+
+- name: 4. Create file php Index
+  template:
+    src: templates/index.php
+    dest: /var/www/secops/public_html/index.php
+  notify:
+  - Restaring Nginx Server
+  tags:
+    - CreateSampleIndexFile
+
+- name: 5. Allow php session
+  shell: chmod 1733 /var/lib/php/session
+  tags:
+    - allow_session
+#chcon -R -t httpd_sys_content_t /srv/www/yoursite
+#command: ln -s /etc/nginx/sites-available/arcyber.conf /etc/nginx/sites-enabled/arcyber.conf

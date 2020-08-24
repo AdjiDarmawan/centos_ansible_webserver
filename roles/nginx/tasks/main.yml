@@ -1,0 +1,66 @@
+---
+#Create Directory For Storage Nginx Configurations
+- name: 1. Create Directory Storage Nginx Configurations
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - '/etc/nginx/sites-available'
+    - '/etc/nginx/sites-enabled'
+    - '/var/www/secops/public_html'
+    - '/var/log/secops'
+
+- name: 2. Nginx Repository
+  template:
+    src: templates/nginx.repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
+  tags:
+    - nginx_repository
+
+#Installing Nginx Server
+- name: 3. Installing Nginx Server
+  yum:
+    name: nginx
+    state: present
+  tags:
+    - nginx_installation
+
+#Change Nginx Configurations on nginx.conf file
+- name: 4. Change Nginx Configurations
+  template:
+    src: templates/nginx.conf
+    dest: /etc/nginx/nginx.conf
+  tags:
+    - nginx_configuration
+
+#Open port 80/443
+- name: 5. Open Port 80/443 (http/https) Services
+  firewalld:
+    port: "{{ item.port }}"
+    permanent: "{{ item.permanent }}"
+    state: enabled
+  with_items:
+    - { port: '80/tcp', permanent: true }
+    - { port: '443/tcp', permanent: true }
+  tags:
+    - open_port_firewalld
+
+- name: 6. Reload firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+  tags:
+    - reload_firewalld
+
+- name: 7. Disable SELinux
+  selinux:
+    state: disabled
+
+#Starting Nginx Services
+- name: 8. Starting Nginx Services
+  service:
+    name: nginx
+    enabled: yes
+    state: started
+  tags:
+    - start_nginx_service

@@ -1,0 +1,82 @@
+---
+#Download remi repo rpm
+- name: 1. Download remi repo rpm
+  get_url:
+    url=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    dest=/root/epel-release-latest-7.noarch.rpm
+  tags:
+    - Preparing_Installation
+
+#Installing php 5.6 version
+- name: 2. Install remi repo rpm
+  yum:
+    name: /root/epel-release-latest-7.noarch.rpm
+    state: present
+  tags:
+    - Preparing_Installation
+
+- name: 3. Download remi repo rpm
+  get_url:
+    url=http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+    dest=/root/remi-release-7.rpm
+  tags:
+    - Preparing_Installation
+
+#Installing php 5.6 version
+- name: 4. Install remi repo rpm
+  yum:
+    name: /root/remi-release-7.rpm
+    state: present
+  tags:
+    - Preparing_Installation
+
+- name: 5. Yum Config Manager
+  shell: yum-config-manager --enable remi-php73
+  tags:
+    - Preparing_Installation
+
+#Installing php 5.6 version
+- name: 6. Installing php Version
+  yum:
+    name:
+      - php
+      - php-mcrypt
+      - php-cli
+      - php-curl
+      - php-mysql
+      - php-ldap
+      - php-fileinfo
+      - php-pear
+      - php
+      - php-gd
+      - php-pdo
+      - php-pecl-redis
+      - php-xml
+      - php-pecl-zip
+      #- php-pecl-jsonc
+      - php-pecl-igbinary
+      - php-mbstring
+      - php-fpm
+    state: latest
+  tags:
+    - Install_php
+
+#Change php-fpm Configurations on nginx.conf file
+- name: 4. Change php-fpm And php.ini Configurations
+  template:
+    src="{{ item.src }}"
+    dest="{{ item.dest }}"
+  with_items:
+    - { src: 'templates/php.ini',dest: '/etc/php.ini'}
+    - { src: 'templates/www.conf',dest: '/etc/php-fpm.d/www.conf'}
+  tags:
+    - File_Configurations
+
+#Starting Nginx Services
+- name: 5. Starting php-fpm Services
+  service:
+    name: php-fpm
+    enabled: yes
+    state: started
+  tags:
+    - Restarting_Sevice

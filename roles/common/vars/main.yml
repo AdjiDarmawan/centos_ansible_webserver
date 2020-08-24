@@ -1,0 +1,8 @@
+---
+# Host Profilling
+hostname: "<FILL_HOSTNAME>"
+ip_address: "<FILL_HOSTIP>"
+
+# Directories Profilling
+dest_myhosts_file: /etc
+ntp_configuration_path: /etc
